@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Donate — Children in Palestine & Israel</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --accent:#0b3b66;
+    --accent-2:#ffc439;
+    --muted:#666;
+    --radius:12px;
+  }
+  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);}
+  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:28px;}
+  .card{width:100%;max-width:720px;background:var(--card);border-radius:var(--radius);box-shadow:0 8px 30px rgba(11,59,102,0.08);padding:28px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
+  .logo{flex:0 0 170px;display:flex;align-items:center;justify-content:center;}
+  .logo img{width:150px;height:150px;object-fit:contain;border-radius:50%;background:transparent;}
+  .content{flex:1 1 320px;}
+  h1{margin:0 0 8px;color:var(--accent);font-size:20px;}
+  p.lead{margin:0 0 16px;color:var(--muted);}
+  .amounts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .amount-btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(11,59,102,0.12);background:white;color:var(--accent);cursor:pointer;font-weight:600;}
+  .amount-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+  .custom{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
+  input[type=number]{padding:10px;border-radius:8px;border:1px solid #ddd;width:140px;}
+  select{padding:10px;border-radius:8px;border:1px solid #ddd;}
+  .donate-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .donate-btn{background:var(--accent-2);border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer;}
+  .note{font-size:13px;color:var(--muted);}
+  footer{margin-top:14px;text-align:center;color:#888;font-size:13px;}
+  @media(max-width:560px){
+    .card{padding:18px;}
+    .logo{flex-basis:110px}
+    .logo img{width:100px;height:100px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" role="main">
+    <div class="logo">
+      <!-- Make sure logo.jpg is in the same folder as this file -->
+      <img id="logoImg" src="logo.jpg" alt="Donation logo">
+    </div>
+
+    <div class="content">
+      <h1>Donate — Children in Palestine & Israel</h1>
+      <p class="lead">Help children affected by conflict. Your donation provides food, shelter and urgent care.</p>
+
+      <div style="margin-bottom:8px;font-weight:600;color:#333;">Choose an amount</div>
+      <div class="amounts" id="amountButtons">
+        <button class="amount-btn" data-amount="5">$5</button>
+        <button class="amount-btn" data-amount="10">$10</button>
+        <button class="amount-btn" data-amount="25">$25</button>
+        <button class="amount-btn" data-amount="50">$50</button>
+      </div>
+
+      <div class="custom">
+        <input id="customAmount" type="number" min="1" step="1" placeholder="Custom amount">
+        <select id="currency">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="ILS">ILS</option>
+        </select>
+      </div>
+
+      <div class="donate-row">
+        <!-- Primary PayPal Donate button - opens PayPal Donate flow in a new tab -->
+        <form id="donationForm" action="https://www.paypal.com/donate" method="post" target="_blank" style="margin:0;">
+          <!-- business set to the account you provided -->
+          <input type="hidden" name="business" value="@DaniloGentilCortina">
+          <input type="hidden" name="currency_code" id="formCurrency" value="USD">
+          <input type="hidden" name="amount" id="formAmount" value="">
+          <button type="submit" class="donate-btn">Donate with PayPal</button>
+        </form>
+
+        <!-- Fallback: direct PayPal.Me link (opens in new tab). -->
+        <div>
+          <div style="margin-bottom:6px;" class="note">Or use direct link:</div>
+          <a id="paypalMeLink" class="note" href="#" target="_blank" rel="noopener">Open PayPal.me</a>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;font-size:13px;color:#666;">
+        Tip: check your PayPal account is verified and email confirmed to receive funds.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Payments processed by PayPal. © Donations</footer>
+
+<script>
+  // Wire up UI logic
+  const buttons = document.querySelectorAll('.amount-btn');
+  const customAmount = document.getElementById('customAmount');
+  const currency = document.getElementById('currency');
+  const formAmount = document.getElementById('formAmount');
+  const formCurrency = document.getElementById('formCurrency');
+  const paypalMeLink = document.getElementById('paypalMeLink');
+
+  function clearActive(){ buttons.forEach(b=>b.classList.remove('active')); }
+
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      clearActive();
+      btn.classList.add('active');
+      customAmount.value = '';
+      formAmount.value = btn.dataset.amount;
+      updatePaypalMeHref();
+    });
+  });
+
+  customAmount.addEventListener('input', ()=>{
+    clearActive();
+    const v = parseFloat(customAmount.value);
+    if (!isNaN(v) && v>0){ formAmount.value = v.toFixed(2); }
+    else formAmount.value = '';
+    updatePaypalMeHref();
+  });
+
+  currency.addEventListener('change', ()=>{
+    formCurrency.value = currency.value;
+    updatePaypalMeHref();
+  });
+
+  // Initialize defaults
+  formCurrency.value = currency.value;
+  document.querySelector('.amount-btn[data-amount="10"]').click();
+
+  // Build PayPal.me fallback link
+  function updatePaypalMeHref(){
+    const user = 'DaniloGentilCortina'; // PayPal.me username (without @)
+    const amount = formAmount.value;
+    let url = 'https://www.paypal.me/' + encodeURIComponent(user);
+    if (amount){
+      url += '/' + encodeURIComponent(amount);
+      url += '?locale.x=en_US&currency=' + encodeURIComponent(formCurrency.value || 'USD');
+    } else {
+      url += '?locale.x=en_US';
+    }
+    paypalMeLink.href = url;
+    paypalMeLink.textContent = 'PayPal.me/' + user + (amount ? ' — ' + amount + ' ' + (formCurrency.value||'USD') : '');
+  }
+
+  updatePaypalMeHref();
+
+  // Prevent submitting without amount
+  document.getElementById('donationForm').addEventListener('submit', function(e){
+    if (!formAmount.value || Number(formAmount.value) <= 0){
+      e.preventDefault();
+      alert('Please enter or select a donation amount before continuing.');
+    }
+  });
+
+  // If logo fails to load, hide the element gracefully
+  document.getElementById('logoImg').addEventListener('error', function(){
+    this.style.display = 'none';
+  });
+</script>
+</body>
+</html>
