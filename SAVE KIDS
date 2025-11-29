@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donations for Children Affected by War</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f6f9fc;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Banner */
+    .banner {
+        width: 100%;
+        max-width: 900px;
+        height: 200px;
+        background: url("banner.jpg") center/cover no-repeat;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    /* Logo */
+    .logo {
+        width: 160px;
+        height: 160px;
+        background: url("logo.jpg") center/cover no-repeat;
+        border-radius: 50%;
+        margin-top: -80px;
+        border: 6px solid white;
+    }
+
+    .container {
+        max-width: 900px;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-top: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    h1 {
+        color: #0b3065;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .donation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .donation-buttons button {
+        background: #0b3065;
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .donation-buttons button:hover {
+        background: #09264f;
+    }
+
+    .paypal-button {
+        margin-top: 20px;
+    }
+
+    footer {
+        margin: 20px;
+        color: #777;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Editable Banner -->
+<div class="banner"></div>
+
+<!-- Editable Logo -->
+<div class="logo"></div>
+
+<div class="container">
+    <h1>Support Children Affected by War</h1>
+    <p>Your donation directly supports Palestinian and Israeli children in need.</p>
+
+    <div class="donation-buttons">
+        <button onclick="setAmount(10)">$10</button>
+        <button onclick="setAmount(20)">$20</button>
+        <button onclick="setAmount(50)">$50</button>
+        <button onclick="setAmount(100)">$100</button>
+    </div>
+
+    <!-- PayPal Donate Form -->
+    <form action="https://www.paypal.com/donate" method="post" target="_blank">
+        <input type="hidden" name="business" value="@DaniloGentilCortina">
+        <input type="hidden" name="currency_code" value="USD">
+        <input id="paypalAmount" type="hidden" name="amount" value="10">
+
+        <button class="paypal-button" type="submit">
+            <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate">
+        </button>
+    </form>
+</div>
+
+<footer>
+    © Donations — Powered by PayPal
+</footer>
+
+<script>
+    function setAmount(value) {
+        document.getElementById("paypalAmount").value = value;
+    }
+</script>
+
+</body>
+</html>
